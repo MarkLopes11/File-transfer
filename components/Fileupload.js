@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react"
 import QRCode from "react-qr-code"
-import { cloudName } from "../utils/cloudinary"
+import { cloudName } from "../utils/cloudinary" // You only need cloudName here
 import { FaCloudUploadAlt, FaCheckCircle } from "react-icons/fa"
 import { MdError } from "react-icons/md"
 import { motion, AnimatePresence } from "framer-motion"
@@ -30,16 +30,23 @@ const FileUpload = () => {
     setUploading(true)
 
     try {
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("upload_preset", "awtx0nm0")
+        // 1. Fetch the signature from your API endpoint
+        const signatureResponse = await fetch('/api/cloudinary_sign'); // Replace with your API route
+        const signatureData = await signatureResponse.json();
 
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: formData,
-      })
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("api_key", signatureData.api_key); // Send the public API key
+        formData.append("timestamp", signatureData.timestamp);
+        formData.append("signature", signatureData.signature);
+        formData.append("upload_preset", signatureData.upload_preset);
 
-      const data = await response.json()
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${signatureData.cloud_name}/image/upload`, {
+            method: "POST",
+            body: formData,
+        });
+
+        const data = await response.json();
 
       if (data.error) {
         console.error("Cloudinary upload error:", data.error)
