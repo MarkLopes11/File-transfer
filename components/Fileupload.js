@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react"
 import QRCode from "react-qr-code"
-import { FaCloudUploadAlt, FaCheckCircle, FaClipboardCheck } from "react-icons/fa"
+import { FaCloudUploadAlt, FaCheckCircle, FaClipboardCheck, FaExternalLinkAlt } from "react-icons/fa"
 import { MdError } from "react-icons/md"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -12,67 +12,73 @@ const FileUpload = () => {
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState(null)
   const fileInputRef = useRef(null)
-  const [copySuccess, setCopySuccess] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false)
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      console.log("Selected file:", selectedFile);
-      setFile(selectedFile);
-      setUploadError(null);
+      const selectedFile = e.target.files[0]
+      console.log("Selected file:", selectedFile)
+      setFile(selectedFile)
+      setUploadError(null)
     }
-  };
+  }
 
   const handleUpload = async () => {
     if (!file) {
-      setUploadError("Please select a file!");
-      return;
+      setUploadError("Please select a file!")
+      return
     }
-    setUploadError(null);
-    setUploading(true);
+    setUploadError(null)
+    setUploading(true)
 
     try {
-      const formData = new FormData();
-      formData.append("file", file); // Append the file with the field name 'file'
+      const formData = new FormData()
+      formData.append("file", file) // Append the file with the field name 'file'
 
       const response = await fetch("/api/bunkr_upload", { // Call the Next.js API route
         method: "POST",
         body: formData,
-      });
+      })
 
       if (!response.ok) {
-        const errorData = await response.json(); // Expect JSON error response from API route
-        console.error("API route error:", response.status, errorData);
-        setUploadError(errorData.error || `Upload failed: Status ${response.status}`); // Use error message from API route if available
+        const errorData = await response.json() // Expect JSON error response from API route
+        console.error("API route error:", response.status, errorData)
+        setUploadError(errorData.error || `Upload failed: Status ${response.status}`) // Use error message from API route if available
       } else {
-        const data = await response.json(); // Expect JSON success response from API route
-        console.log("API route response to frontend:", data);
+        const data = await response.json() // Expect JSON success response from API route
+        console.log("API route response to frontend:", data)
         if (data && data.downloadLink) {
-          setDownloadLink(data.downloadLink);
+          setDownloadLink(data.downloadLink)
         } else {
-          setUploadError("Upload successful, but download link not received.");
-          console.error("Download link missing in API response:", data);
+          setUploadError("Upload successful, but download link not received.")
+          console.error("Download link missing in API response:", data)
         }
       }
 
     } catch (error) {
-      console.error("Frontend upload error:", error);
-      setUploadError("Upload failed. Please try again.");
+      console.error("Frontend upload error:", error)
+      setUploadError("Upload failed. Please try again.")
     } finally {
-      setUploading(false);
+      setUploading(false)
     }
-  };
+  }
 
   const handleChooseFileClick = () => {
     fileInputRef.current.click()
   }
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(downloadLink);
-    setCopySuccess(true);
+    navigator.clipboard.writeText(downloadLink)
+    setCopySuccess(true)
     setTimeout(() => {
-      setCopySuccess(false);
-    }, 1500);
+      setCopySuccess(false)
+    }, 1500)
+  }
+
+  const handleReset = () => {
+    setFile(null)
+    setDownloadLink("")
+    setUploadError(null)
   }
 
   return (
@@ -86,6 +92,16 @@ const FileUpload = () => {
         <FaCloudUploadAlt className="inline-block mr-2 text-blue-500" />
         File Upload
       </h2>
+      
+      {/* Hidden file input referenced by fileInputRef */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        className="hidden"
+        disabled={uploading}
+      />
+      
       {!downloadLink && (
         <motion.div
           whileHover={{ scale: 1.02 }}
@@ -95,18 +111,9 @@ const FileUpload = () => {
         >
           <FaCloudUploadAlt className="mx-auto text-4xl text-blue-500 mb-2" />
           <span className="text-gray-700 font-medium">{file ? file.name : "Choose a file or drag it here"}</span>
-          <input
-            type="file"
-            onChange={(e) => {
-              handleFileChange(e);
-              e.target.value = null; // Reset input field after file selection
-            }}
-            className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
-            ref={fileInputRef}
-            disabled={uploading}
-          />
         </motion.div>
       )}
+      
       {!downloadLink && (
         <AnimatePresence>
           {uploadError && (
@@ -129,10 +136,11 @@ const FileUpload = () => {
           whileTap={{ scale: 0.95 }}
           onClick={handleUpload}
           disabled={uploading || !file}
-          className={`mt-6 w-full py-3 px-5 rounded-md text-white font-semibold transition-all duration-200 ${uploading || !file
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600 shadow-md hover:shadow-lg"
-            }`}
+          className={`mt-6 w-full py-3 px-5 rounded-md text-white font-semibold transition-all duration-200 ${
+            uploading || !file
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600 shadow-md hover:shadow-lg"
+          }`}
         >
           {uploading ? (
             <div className="flex items-center justify-center">
@@ -156,6 +164,7 @@ const FileUpload = () => {
           )}
         </motion.button>
       )}
+      
       <AnimatePresence>
         {downloadLink && (
           <motion.div
@@ -170,7 +179,7 @@ const FileUpload = () => {
             <div className="flex gap-2">
               <button
                 onClick={handleCopyLink}
-                className=" bg-blue-600 text-white p-3 flex-1 rounded-lg flex items-center justify-center font-medium"
+                className="bg-blue-600 text-white p-3 flex-1 rounded-lg flex items-center justify-center font-medium"
               >
                 {copySuccess ? (
                   <>
@@ -184,15 +193,25 @@ const FileUpload = () => {
                 href={downloadLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-lg border-2 flex-1 border-blue-600 p-3 flex items-center justify-center font-medium"
+                className="rounded-lg border-2 flex-1 border-blue-600 p-3 flex items-center justify-center font-medium hover:bg-blue-50 transition-colors"
               >
-                Download Link
+                <FaExternalLinkAlt className="text-blue-600" size={20} />
+                <span className="ml-2">Open</span>
               </a>
             </div>
 
             <div className="mt-4 flex justify-center">
-              <QRCode value={downloadLink} size={300} />
+              <QRCode value={downloadLink} size={200} />
             </div>
+            
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleReset}
+              className="mt-6 w-full py-3 px-5 rounded-md text-blue-600 border border-blue-600 font-semibold transition-all duration-200 hover:bg-blue-50"
+            >
+              Upload Another File
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
