@@ -1,7 +1,7 @@
 {
     "version": 2,
     "functions": {
-      "pages/api/bunkr_upload.js": {
+      "api/upload.js": {
         "maxDuration": 60,
         "memory": 512
       }
