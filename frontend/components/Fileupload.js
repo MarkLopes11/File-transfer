@@ -27,6 +27,7 @@ const FileUpload = () => {
   const [showFilePreviews, setShowFilePreviews] = useState(true)
   const dragCounter = useRef(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [uploadComplete, setUploadComplete] = useState(false); // ADDED: New state variable
 
   // Load saved results and preferences from localStorage on initial load
   useEffect(() => {
@@ -211,10 +212,24 @@ const FileUpload = () => {
     } finally {
       setUploading(false)
       setFiles([]) // Clear only the files after upload, not the results
-      setShowUploadForm(false) // Hide the upload form after completion
+      // setShowUploadForm(false);  <-- REMOVED from here
       setUploadProgress({})
+      setUploadComplete(true); // ADDED: Set uploadComplete to true
+      console.log("FileUpload: finally block executed");
+      console.log("FileUpload: showUploadForm state:", showUploadForm);
+      console.log("FileUpload: uploadResults state:", uploadResults);
+      console.log("FileUpload: uploadResults array:", uploadResults); // <-- ADDED LOGGING HERE
     }
   }
+
+  // ADDED: useEffect to handle setShowUploadForm after upload completion
+  useEffect(() => {
+    if (uploadComplete) {
+      setShowUploadForm(false);
+      setUploadComplete(false); // Reset for next upload
+    }
+  }, [uploadComplete]);
+
 
   const handleChooseFileClick = () => {
     fileInputRef.current.click()
@@ -236,6 +251,7 @@ const FileUpload = () => {
   }
 
   const handleFileSelect = (index, e) => {
+    console.log("handleFileSelect called for index:", index); // CHECK 1: Is handleFileSelect being called?
     if (selectedResultIndex === index) {
       setSelectedResultIndex(null)
       return
@@ -255,6 +271,7 @@ const FileUpload = () => {
     })
 
     setSelectedResultIndex(index)
+    console.log("selectedResultIndex set to:", index); // CHECK 2: Is selectedResultIndex being set?
   }
 
   const toggleFavorite = (index, e) => {
@@ -675,6 +692,11 @@ const FileUpload = () => {
         {/* Upload Results Section */}
         {filteredResults.length > 0 && (
           <div className={`${!showUploadForm ? 'mt-0' : 'mt-4'}`}>
+            {/* Added console logs for debugging */}
+            {console.log("FileUpload: Rendering Upload Results Section")}
+            {console.log("FileUpload: filteredResults:", filteredResults)}
+            {console.log("FileUpload: showUploadForm (before section):", showUploadForm)}
+
             <div className={`border rounded-lg overflow-hidden ${themeClasses.borderColor}`}>
               <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} py-2 px-3 border-b ${themeClasses.borderColor} font-medium ${themeClasses.textColor} text-sm flex items-center justify-between`}>
                 <span>
@@ -757,6 +779,8 @@ const FileUpload = () => {
             }}
             className={`qr-popover w-72 h-auto ${themeClasses.cardBg} rounded-xl shadow-xl border ${themeClasses.borderColor} p-4`}
           >
+            {console.log("QR Popover is rendering for index:", selectedResultIndex)} {/* CHECK 3: Is the popover rendering? */}
+            {console.log("Upload Result for QR Code:", uploadResults[selectedResultIndex])} {/* CHECK 4: Log the upload result object */}
             <h3 className={`font-bold text-sm mb-2 ${themeClasses.textColor} truncate`}>{uploadResults[selectedResultIndex].fileName}</h3>
 
             <div className="flex justify-center mb-3">
