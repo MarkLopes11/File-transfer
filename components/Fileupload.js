@@ -10,6 +10,7 @@ import {
 import { MdError, MdInfo } from "react-icons/md"
 import { motion, AnimatePresence } from "framer-motion"
 
+
 const FileUpload = () => {
   const [files, setFiles] = useState([])
   const [uploadResults, setUploadResults] = useState([])

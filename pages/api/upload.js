@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     }
 
     const BUNKR_API_URL = "https://n15.bunkr.ru/api/upload";
-    const BUNKR_TOKEN = process.env.BUNKR_TOKEN;
+    const BUNKR_TOKEN=RkQ39mCdWUTWmQiJpou8y42glCbmHaK03GR1ePy5Cplvw33h9J8llzAbbiVZ0cSG;
 
     if (!BUNKR_TOKEN) {
         console.error("BUNKR_TOKEN environment variable is not set!");
