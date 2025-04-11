@@ -16,8 +16,8 @@ export default async function handler(req, res) {
         return res.status(405).json({ message: 'Method Not Allowed' });
     }
 
-    const BUNKR_API_URL = "https://n15.bunkr.ru/api/upload";
-    const BUNKR_TOKEN=RkQ39mCdWUTWmQiJpou8y42glCbmHaK03GR1ePy5Cplvw33h9J8llzAbbiVZ0cSG;
+    const BUNKR_API_URL = "https://n25.bunkr.ru/api/upload";
+    const BUNKR_TOKEN=process.env.BUNKR_TOKEN;
 
     if (!BUNKR_TOKEN) {
         console.error("BUNKR_TOKEN environment variable is not set!");
