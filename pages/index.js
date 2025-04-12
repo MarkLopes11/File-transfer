@@ -1,4 +1,4 @@
-import FileUpload from "../components/Fileupload";
+import FileUpload from "../components/expand";
 
 
 function Home() {
