@@ -193,7 +193,6 @@ const FileUpload = () => {
             const fileOrWrapper = files[i];
             const fileToUpload = getFileObject(fileOrWrapper); // Get the actual File object
 
-            // ** Crucial Validation **
             if (!(fileToUpload instanceof File)) {
               console.error(`Item at index ${i} is not a valid File object:`, fileOrWrapper);
               results.push({
