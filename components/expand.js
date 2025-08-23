@@ -669,7 +669,6 @@ const FileUpload = () => {
                     className="hidden"
                     disabled={uploading}
                     multiple
-                    accept="image/*,video/*,audio/*,application/pdf,.zip,.rar" // Example: Limit accepted types
                 />
 
                 {/* Upload Form Section (Conditional) */}
