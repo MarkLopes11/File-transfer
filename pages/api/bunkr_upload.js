@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ message: 'Method Not Allowed' });
     }
 
-    const BUNKR_API_URL = "https://n25.bunkr.ru/api/upload";
+    const BUNKR_API_URL = "https://n29.bunkr.ru/api/upload";
     const BUNKR_TOKEN = process.env.BUNKR_TOKEN;
     const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB limit (adjust as needed)
 
